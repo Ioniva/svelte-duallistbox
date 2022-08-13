@@ -1,30 +1,20 @@
 <script>
+  let selected = [];
+
+  // First box logic
   let itemListA = [
     { id: 1312, text: "slow" },
     { id: 2523, text: "chimney" },
     { id: 3511, text: "safari" },
   ];
-  let itemListB = [];
-  let selected = [];
+  $: counterListA = filterListA.length;
   let prefixA = "";
-  let prefixB = "";
-
   $: filterListA = prefixA
     ? itemListA.filter((item) => {
         const text = item.text;
         return text.toLocaleLowerCase().startsWith(prefixA.toLocaleLowerCase());
       })
     : itemListA;
-
-  $: filterListB = prefixB
-    ? itemListB.filter((item) => {
-        const text = item.text;
-        return text.toLocaleLowerCase().startsWith(prefixB.toLocaleLowerCase());
-      })
-    : itemListB;
-
-  $: counterListA = filterListA.length;
-  $: counterListB = filterListB.length;
 
   function sendToRight() {
     const selectedOptions = itemListA.filter((item) => selected.includes(item.id));
@@ -43,6 +33,18 @@
     });
     itemListA = itemListA;
   }
+
+  // Second box logic
+  let itemListB = [];
+  let prefixB = "";
+  $: counterListB = filterListB.length;
+
+  $: filterListB = prefixB
+    ? itemListB.filter((item) => {
+        const text = item.text;
+        return text.toLocaleLowerCase().startsWith(prefixB.toLocaleLowerCase());
+      })
+    : itemListB;
 
   function sendToLeft() {
     const selectedOptions = itemListB.filter((todo) => selected.includes(todo.id));
@@ -63,90 +65,78 @@
   }
 </script>
 
+<!-- Title -->
+<h1 class="text-center border-bottom">Dual ListBox</h1>
+
 <div class="container">
-  <div class="form-group">
-    <strong>Multiple</strong>
-    <div class="row">
-      <!-- First Container -->
-      <div class="box1 col-5">
-        <div class="info-container">
-          {#if counterListA === 0}
-            <p class="info">Empty list</p>
-          {:else}
-            <p class="info">Showing all {counterListA}</p>
-          {/if}
-        </div>
-
-        <input
-          class="form-control filter"
-          type="text"
-          placeholder="Filter"
-          bind:value={prefixA}
-        />
-        <select class="w-100 h-100" multiple bind:value={selected}>
-          {#each filterListA as item}
-            <option value={item.id}>{item.text}</option>
-          {/each}
-        </select>
-      </div>
-      <!-- /First Container -->
-
-      <!-- Action Buttons -->
-      <div class="col-2 h-100">
-        <button
-          class="btn moveone btn-outline-secondary w-100"
-          id="oneToRight"
-          type="button"
-          title="moveone"
-          on:click={sendToRight}>&#62</button
-        >
-        <button
-          class="btn moveone btn-outline-secondary w-100 mt-2"
-          type="button"
-          title="moveall"
-          on:click={sendAllToRight}>&#62&#62</button
-        >
-        <button
-          class="btn moveone btn-outline-secondary w-100 mt-4"
-          type="button"
-          title="moveone"
-          on:click={sendToLeft}>&#60</button
-        >
-        <button
-          class="btn moveone btn-outline-secondary w-100 mt-2"
-          type="button"
-          title="moveall"
-          on:click={sendAllToLeft}>&#60&#60</button
-        >
-      </div>
-      <!-- /Action Buttons-->
-
-      <!-- Second Container -->
-      <div class="box2 col-5">
-        <div class="info-container">
-          {#if counterListB === 0}
-            <p class="info">Empty list</p>
-          {:else}
-            <p class="info">Showing all {counterListB}</p>
-          {/if}
-        </div>
-
-        <input
-          class="form-control filter"
-          type="text"
-          placeholder="Filter"
-          bind:value={prefixB}
-        />
-        <select class="w-100 h-100" multiple bind:value={selected}>
-          {#each filterListB as item}
-            <option value={item.id}>{item.text}</option>
-          {/each}
-        </select>
-      </div>
+  <div class="row">
+    <!-- First container -->
+    <div class="col-5">
+      <!-- Options counter-->
+      {#if counterListA === 0}
+        <small>Empty list</small>
+      {:else}
+        <small>Showing all {counterListA}</small>
+      {/if}
+      <!-- Filter input -->
+      <input
+        class="mb-3 w-100"
+        type="text"
+        placeholder="Filter"
+        bind:value={prefixA}
+      />
+      <!-- Select options-->
+      <select class="w-100 w-100" multiple bind:value={selected}>
+        {#each filterListA as item}
+          <option class="border-bottom " value={item.id} on:dblclick={sendToRight}
+            >{item.text}</option
+          >
+        {/each}
+      </select>
     </div>
-    <!-- /Second Container -->
+    <!-- /First container -->
+
+    <!-- Buttons container -->
+    <div class="row col-2 align-item-center">
+      <button class="btn btn-outline-secondary w-100" on:click={sendToRight}
+        >&#62</button
+      >
+      <button class="btn btn-outline-secondary w-100" on:click={sendAllToRight}
+        >&#62&#62</button
+      >
+      <button class="btn btn-outline-secondary w-100 mt-4" on:click={sendToLeft}
+        >&#60</button
+      >
+      <button class="btn btn-outline-secondary w-100" on:click={sendAllToLeft}
+        >&#60&#60</button
+      >
+    </div>
+    <!-- /Buttons container -->
+
+    <!-- Second container -->
+    <div class="col-5">
+      <!-- Options counter-->
+      {#if counterListB === 0}
+        <small>Empty list</small>
+      {:else}
+        <small>Showing all {counterListB}</small>
+      {/if}
+      <!-- Filter input -->
+      <input
+        class="mb-3 w-100"
+        type="text"
+        placeholder="Filter"
+        bind:value={prefixB}
+      />
+      <!-- Select options-->
+      <select class="w-100" multiple bind:value={selected}>
+        {#each filterListB as item}
+          <option class="border-bottom" value={item.id} on:dblclick={sendAllToLeft}
+            >{item.text}</option
+          >
+        {/each}
+      </select>
+    </div>
+    <!-- /Second container -->
   </div>
 </div>
-
-<style>
-</style>
