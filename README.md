@@ -2,7 +2,7 @@
 A simple dual listbox component for Svelte.
 
 ## Demo
-<a href="">Simple demo</a>
+🌱[Simple demo](https://svelte.dev/repl/17b7b7f427d2464ead3a01b5d800fbc6?version=3.50.1)
 
 ## Get started
 Install the dependencies...
